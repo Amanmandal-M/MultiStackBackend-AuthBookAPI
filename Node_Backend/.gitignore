@@ -1,0 +1,30 @@
+# Node.js dependencies
+node_modules/
+
+# Build artifacts
+dist/
+build/
+out/
+
+# Environment files
+.env
+
+# Log files
+*.log
+
+# Dependency lock files
+package-lock.json
+yarn.lock
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
+
+# Custom configuration files (may vary based on project setup)
+config.js
+config.json
