@@ -1,0 +1,32 @@
+# TypeScript build output
+dist/
+out/
+
+# Node.js dependencies
+node_modules/
+
+# Environment files
+.env
+
+# IDE and editor files
+.vscode/
+.idea/
+*.tsbuildinfo
+
+# Dependency lock files
+yarn.lock
+package-lock.json
+
+# Build artifacts
+*.js
+*.js.map
+*.d.ts
+
+# Logs and temporary files
+*.log
+*.swp
+*~
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
