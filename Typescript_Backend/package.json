@@ -8,7 +8,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --exec ts-node server.ts"
+    "start": "nodemon --exec ts-node server.ts",
+    "server": "node dist/server.ts",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "Aman Kumar",
