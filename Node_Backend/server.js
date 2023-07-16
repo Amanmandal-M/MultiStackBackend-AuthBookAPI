@@ -8,6 +8,10 @@ dotenv.config();
 
 // Connection URI for MongoDB
 const dbConnection = require("./configs/db");
+const { userRouter } = require("./routes/user_route");
+const { bookRouter } = require("./routes/book_route");
+const { cartRouter } = require("./routes/cart_route");
+const authMiddleware = require("./middlewares/authentication_middleware");
 
 
 const PORT = process.env.PORT || 3000;
@@ -24,9 +28,10 @@ app.get('/',(req,res)=>{
     return res.send(`<h1 style="color:blue";text-align:center>Welcome in Books NodeJs Backend Api</h1>`).status(200)
 })
 
-// app.use('/user',userRouter);
-// app.use(authenticationMiddleware);
-// app.use('/book',bookRouter);
+app.use('/user',userRouter);
+app.use(authMiddleware);
+app.use('/book',bookRouter);
+app.use('/cart',cartRouter);
 
 
 app.listen(PORT,async()=>{

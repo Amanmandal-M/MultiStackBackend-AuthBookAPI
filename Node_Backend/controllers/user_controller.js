@@ -16,7 +16,7 @@ module.exports.registerController = async (req, res) => {
       password === "" ||
       role === ""
     ) {
-      return res.status(400).send({
+      return res.status(400).json({
         error: "Bad Request",
         message: "The request is missing required parameters.",
       });
@@ -25,7 +25,7 @@ module.exports.registerController = async (req, res) => {
     const isPresent = await userModel.findOne({ email });
 
     if (isPresent) {
-      return res.status(400).send({
+      return res.status(400).json({
         error: "Bad Request",
         message: "User already exists",
       });
@@ -33,7 +33,7 @@ module.exports.registerController = async (req, res) => {
 
     bcrypt.hash(password, saltRounds, function (err, hash) {
       if (err) {
-        return res.status(500).send({
+        return res.status(500).json({
           error: "Internal Server Error",
           message: "An error occurred while hashing the password.",
         });
@@ -45,12 +45,13 @@ module.exports.registerController = async (req, res) => {
         contactNo,
         password: hash,
         role,
+        updatedAt:null
       });
 
       data
         .save()
         .then(() => {
-          res.status(201).send({
+          res.status(201).json({
             message: "User registered successfully",
             data: {
               name: data.name,
@@ -61,14 +62,14 @@ module.exports.registerController = async (req, res) => {
           });
         })
         .catch((error) => {
-          res.status(500).send({
+          res.status(500).json({
             error: "Internal Server Error",
             message: "An error occurred while saving the user.",
           });
         });
     });
   } catch (error) {
-    res.status(500).send({
+    res.status(500).json({
       error: "Internal Server Error",
       message: "An error occurred.",
     });
@@ -80,7 +81,7 @@ module.exports.loginController = async (req, res) => {
     const { email, password } = req.body;
 
     if (email === "" || password === "") {
-      return res.status(400).send({
+      return res.status(400).json({
         error: "Bad Request",
         message: "The request is missing required parameters.",
       });
@@ -89,7 +90,7 @@ module.exports.loginController = async (req, res) => {
     const user = await userModel.findOne({ email });
 
     if (!user) {
-      return res.status(404).send({
+      return res.status(404).json({
         error: "Not Found",
         message: "User not found.",
       });
@@ -97,14 +98,14 @@ module.exports.loginController = async (req, res) => {
 
     bcrypt.compare(password, user.password, (err, result) => {
       if (err) {
-        return res.status(500).send({
+        return res.status(500).json({
           error: "Internal Server Error",
           message: "An error occurred while comparing passwords.",
         });
       }
 
       if (!result) {
-        return res.status(401).send({
+        return res.status(401).json({
           error: "Unauthorized",
           message: "Invalid credentials.",
         });
@@ -119,7 +120,7 @@ module.exports.loginController = async (req, res) => {
         expiresIn: "1h",
       });
 
-      res.status(200).send({
+      res.status(200).json({
         message: "Login successful",
         token: token,
         user: {
@@ -132,7 +133,7 @@ module.exports.loginController = async (req, res) => {
       });
     });
   } catch (error) {
-    res.status(500).send({
+    res.status(500).json({
       error: "Internal Server Error",
       message: "An error occurred.",
     });
