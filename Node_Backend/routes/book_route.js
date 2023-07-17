@@ -4,6 +4,7 @@ const bookRouter = express.Router();
 // Import the book controller
 const {
   getAllBooks,
+  getAllBooksBySeller,
   getBookById,
   createBook,
   updateBook,
@@ -18,6 +19,9 @@ const authorizationMiddleware = require("../middlewares/authorization_middleware
 
 // Accessible by all users (Customer, Seller, Admin)
 bookRouter.get("/", getAllBooks);
+
+// Accessible by all users (Seller, Admin)
+bookRouter.get("/seller",authorizationMiddleware(["seller", "admin"]), getAllBooksBySeller);
 
 // Accessible by all users (Customer, Seller, Admin)
 bookRouter.get("/:id", getBookById);

@@ -1,4 +1,5 @@
-const cartModel = require("../models/cart_model");
+const { cartModel } = require("../models/cart_model");
+
 
 module.exports.getCart = async (req, res) => {
   try {
@@ -22,7 +23,7 @@ module.exports.getCart = async (req, res) => {
     res.status(500).json({
       success: false,
       error: "Internal Server Error",
-      message: "An error occurred on the server1",
+      message: "An error occurred on the server",
     });
   }
 };
@@ -34,11 +35,16 @@ module.exports.addToCart = async (req, res) => {
 
     let cart = await cartModel.findOne({ userId });
     if (!cart) {
-      cart = new cartModel({ userId, books: [] });
-      await cart.save()
+      cart = new cartModel({
+        userId,
+        books: [],
+      });
+      await cart.save();
     }
 
-    const existingBook = cart.books.find((item) => item.bookId.toString() === bookId);
+    const existingBook = cart.books.find(
+      (item) => item.bookId.toString() === bookId
+    );
 
     if (existingBook) {
       existingBook.quantity += quantity;
@@ -57,7 +63,7 @@ module.exports.addToCart = async (req, res) => {
     res.status(500).json({
       success: false,
       error: "Internal Server Error",
-      message: "An error occurred on the server2",
+      message: "An error occurred on the server",
     });
   }
 };
@@ -101,7 +107,7 @@ module.exports.updateCartItem = async (req, res) => {
     res.status(500).json({
       success: false,
       error: "Internal Server Error",
-      message: "An error occurred on the server3",
+      message: "An error occurred on the server",
     });
   }
 };
@@ -122,7 +128,9 @@ module.exports.removeCartItem = async (req, res) => {
       });
     }
 
-    const cartItemIndex = cart.books.findIndex((item) => item._id.toString() === bookId);
+    const cartItemIndex = cart.books.findIndex(
+      (item) => item._id.toString() === bookId
+    );
 
     if (cartItemIndex === -1) {
       return res.status(404).json({
@@ -145,7 +153,7 @@ module.exports.removeCartItem = async (req, res) => {
     res.status(500).json({
       success: false,
       error: "Internal Server Error",
-      message: "An error occurred on the server4",
+      message: "An error occurred on the server",
     });
   }
 };
@@ -177,7 +185,7 @@ module.exports.clearCart = async (req, res) => {
     res.status(500).json({
       success: false,
       error: "Internal Server Error",
-      message: "An error occurred on the server5",
+      message: "An error occurred on the server",
     });
   }
 };

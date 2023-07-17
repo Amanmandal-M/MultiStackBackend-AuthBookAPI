@@ -1,5 +1,6 @@
 // Model location
-const bookModel = require("../models/book_model");
+const { bookModel } = require("../models/book_model");
+const { userModel } = require("../models/user_model");
 
 // Get all books
 module.exports.getAllBooks = async (req, res) => {
@@ -71,11 +72,43 @@ module.exports.getBookById = async (req, res) => {
   }
 };
 
+// Get book by Seller
+module.exports.getAllBooksBySeller = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const user = await userModel.findById(userId);
+    const books = await bookModel.find({ userId });
+
+    const userData = {
+        seller: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          contactNo: user.contactNo,
+          role: user.role,
+        },
+        books: books
+      };
+
+    res.status(200).json({
+      success: true,
+      message: "Books retrieved successfully",
+      data: userData,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Internal Server Error",
+      message: "An error occurred on the server",
+    });
+  }
+};
+
 // Create a new book
 module.exports.createBook = async (req, res) => {
   try {
     const userIdMain = req.userId;
-    const { bookName, bookTitle, authorName, authorId } = req.body;
+    const { bookName, bookTitle, authorName, authorId, imageUrl } = req.body;
 
     if (!userIdMain) {
       return res.status(400).json({
@@ -87,6 +120,7 @@ module.exports.createBook = async (req, res) => {
 
     const newBook = new bookModel({
       userId: userIdMain,
+      imageUrl,
       bookName,
       bookTitle,
       authorName,
