@@ -4,7 +4,7 @@ const bookRouter = express.Router();
 // Import the book controller
 const {
   getAllBooks,
-  getAllBooksBySeller,
+  getBooksByRole,
   getBookById,
   createBook,
   updateBook,
@@ -14,6 +14,7 @@ const {
 
 // Import the authorization middleware
 const authorizationMiddleware = require("../middlewares/authorization_middleware");
+const { authMiddleware } = require("../middlewares/authentication_middleware");
 
 // Define the book routes
 
@@ -21,24 +22,48 @@ const authorizationMiddleware = require("../middlewares/authorization_middleware
 bookRouter.get("/", getAllBooks);
 
 // Accessible by all users (Seller, Admin)
-bookRouter.get("/seller",authorizationMiddleware(["seller", "admin"]), getAllBooksBySeller);
+bookRouter.get(
+  "/seller",
+  authMiddleware,
+  authorizationMiddleware(["seller", "admin"]),
+  getBooksByRole
+);
 
 // Accessible by all users (Customer, Seller, Admin)
 bookRouter.get("/:id", getBookById);
 
+
 // Routes for sellers and admins
+// Accessible by sellers and admin
+bookRouter.post(
+  "/",
+  authMiddleware,
+  authorizationMiddleware(["seller", "admin"]),
+  createBook
+);
 
 // Accessible by sellers and admin
-bookRouter.post("/", authorizationMiddleware(["seller", "admin"]), createBook);
+bookRouter.put(
+  "/:id",
+  authMiddleware,
+  authorizationMiddleware(["seller", "admin"]),
+  updateBook
+);
 
 // Accessible by sellers and admin
-bookRouter.put("/:id", authorizationMiddleware(["seller", "admin"]), updateBook);
-
-// Accessible by sellers and admin
-bookRouter.patch("/:id", authorizationMiddleware(["seller", "admin"]), patchBook);
+bookRouter.patch(
+  "/:id",
+  authMiddleware,
+  authorizationMiddleware(["seller", "admin"]),
+  patchBook
+);
 
 // Accessible by admin only
-bookRouter.delete("/:id", authorizationMiddleware("admin"), deleteBook);
-
+bookRouter.delete(
+  "/:id",
+  authMiddleware,
+  authorizationMiddleware("admin"),
+  deleteBook
+);
 
 module.exports = { bookRouter };

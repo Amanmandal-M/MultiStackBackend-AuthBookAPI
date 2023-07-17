@@ -4,6 +4,9 @@ const bcrypt = require("bcrypt");
 // Models Location
 const { userModel } = require("../models/user_model");
 
+// Node Mailer Location
+const { sendEmail } = require("../nodemailer/sendingEmails");
+
 module.exports.registerController = async (req, res) => {
   try {
     const { name, email, contactNo, password, role } = req.body;
@@ -51,6 +54,14 @@ module.exports.registerController = async (req, res) => {
       data
         .save()
         .then(() => {
+          sendEmail({
+            'email':email,
+            'body':`<h1 style="color:blue;text-align:center">Welcome in Books NodeJs Backend Services</h1>
+                     <div style="display:block;margin:auto;text-align:center">
+                       Welcome ${name} in Books Services. Now go and login now.
+                     </div>
+                    `
+          })
           res.status(201).json({
             message: "User registered successfully",
             data: {
@@ -114,6 +125,7 @@ module.exports.loginController = async (req, res) => {
       const payload = {
         userId: user._id,
         role: user.role,
+        email: user.email
       };
 
       const token = jwt.sign(payload, process.env.NORMAL_KEY, {

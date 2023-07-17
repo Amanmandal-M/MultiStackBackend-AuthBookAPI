@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-module.exports = authMiddleware = (req, res, next) => {
+module.exports.authMiddleware = (req, res, next) => {
   try {
     // Get the token from the request headers
     const token = req.headers.authorization.split(" ")[1];
@@ -11,10 +11,12 @@ module.exports = authMiddleware = (req, res, next) => {
     // Extract the user ID and role from the decoded token
     const userId = decoded.userId;
     const role = decoded.role;
+    const email = decoded.email;
 
     // Attach the user ID and role to the request object for further use
     req.userId = userId;
     req.role = role;
+    req.email = email;
 
     // Call the next middleware
     next();

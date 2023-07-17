@@ -1,4 +1,5 @@
 const { cartModel } = require("../models/cart_model");
+const { sendEmail } = require("../nodemailer/sendingEmails");
 
 
 module.exports.getCart = async (req, res) => {
@@ -31,6 +32,7 @@ module.exports.getCart = async (req, res) => {
 module.exports.addToCart = async (req, res) => {
   try {
     const userId = req.userId;
+    const email = req.email;
     const { bookId, quantity } = req.body;
 
     let cart = await cartModel.findOne({ userId });
@@ -53,6 +55,15 @@ module.exports.addToCart = async (req, res) => {
     }
 
     await cart.save();
+
+    sendEmail({
+      'email':email,
+      'body':`<h1 style="color:blue;text-align:center">Added item in cart.Shop more</h1>
+               <div style="display:block;margin:auto;text-align:center">
+                 Your item is added in cart . Proceed for payment.
+               </div>
+              `
+    })
 
     res.status(201).json({
       success: true,
