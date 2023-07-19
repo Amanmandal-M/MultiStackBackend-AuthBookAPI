@@ -12,16 +12,26 @@ module.exports.registerController = async (req, res) => {
     const { name, email, contactNo, password, role } = req.body;
     const saltRounds = 10;
 
-    if (
-      name === "" ||
-      email === "" ||
-      contactNo === "" ||
-      password === "" ||
-      role === ""
-    ) {
+    const requiredFields = {
+      name,
+      email,
+      contactNo,
+      password,
+      role,
+    };
+    const missingFields = [];
+
+    for (const [field, value] of Object.entries(requiredFields)) {
+      if (!value || value === "") {
+        missingFields.push(field);
+      }
+    }
+
+    if (missingFields.length > 0) {
       return res.status(400).json({
+        success: false,
         error: "Bad Request",
-        message: "The request is missing required parameters.",
+        message: `The following fields are missing: ${missingFields.join(", ")}.`,
       });
     }
 
@@ -48,21 +58,22 @@ module.exports.registerController = async (req, res) => {
         contactNo,
         password: hash,
         role,
-        updatedAt:null
+        updatedAt: null,
       });
 
       data
         .save()
         .then(() => {
           sendEmail({
-            'email':email,
-            'body':`<h1 style="color:blue;text-align:center">Welcome in Books NodeJs Backend Services</h1>
-                     <div style="display:block;margin:auto;text-align:center">
-                       Welcome ${name} in Books Services. Now go and login now.
-                     </div>
-                    `
-          })
+            email: email,
+            body: `<h1 style="color:blue;text-align:center">Welcome in Books NodeJs Backend Services</h1>
+                   <div style="display:block;margin:auto;text-align:center">
+                     Welcome ${name} in Books Services. Now go and login now.
+                   </div>
+                  `,
+          });
           res.status(201).json({
+            success: true,
             message: "User registered successfully",
             data: {
               name: data.name,
@@ -91,10 +102,23 @@ module.exports.loginController = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (email === "" || password === "") {
+    const requiredFields = {
+      email,
+      password,
+    };
+    const missingFields = [];
+
+    for (const [field, value] of Object.entries(requiredFields)) {
+      if (!value || value === "") {
+        missingFields.push(field);
+      }
+    }
+
+    if (missingFields.length > 0) {
       return res.status(400).json({
+        success: false,
         error: "Bad Request",
-        message: "The request is missing required parameters.",
+        message: `The following fields are missing: ${missingFields.join(", ")}.`,
       });
     }
 
@@ -125,7 +149,7 @@ module.exports.loginController = async (req, res) => {
       const payload = {
         userId: user._id,
         role: user.role,
-        email: user.email
+        email: user.email,
       };
 
       const token = jwt.sign(payload, process.env.NORMAL_KEY, {
